@@ -1,0 +1,67 @@
+---- language Matches (8 in 3 files) ----
+{anonMenuManage_t} in cot_menu.c : 
+    MenuCallFun_f      pfnLoadCallFun;      /*!< 重加载函数 */
+    uint8_t            language;            /*!< 语种选择 */
+    uint8_t            isEnterMainMenu : 1; /*!< 是否进入了主菜单 */
+}MenuManage_t;
+
+cotMenu_Init in cot_menu.c : 
+    
+    sg_tMenuManage.language = 0;
+
+    for (i = 0; i < MENU_SUPPORT_LANGUAGE; i++)
+    {
+cotMenu_DeInit in cot_menu.c : 
+    sg_tMenuManage.pMenuCtrl = NULL;
+    sg_tMenuManage.language = 0;
+    sg_tMenuManage.isEnterMainMenu = 0;
+    sg_tMenuManage.pfnMainEnterCallFun = NULL;
+    sg_tMenuManage.pfnMainExitCallFun = NULL;
+cot_menu.c line 226 : 
+  * 
+  * @param[in]  languageIdx 语种索引
+  * @return     0,成功; -1,失败
+  */
+int cotMenu_SelectLanguage(uint8_t languageIdx)
+{
+    if (MENU_SUPPORT_LANGUAGE <= languageIdx)
+    {
+        return -1;
+    }
+
+    sg_tMenuManage.language = languageIdx;
+    return 0;
+}
+
+cotMenu_QueryParentMenu in cot_menu.c : 
+
+        ptMenuShow->pszDesc = sg_tMenuManage.pMenuCtrl->pszDesc[sg_tMenuManage.language];
+
+        for (i = 0; i < ptMenuShow->itemsNum && i < MENU_MAX_NUM; i++)
+        {
+            ptMenuShow->pszItemsDesc[i] = (char *)pMenu[i].pszDesc[sg_tMenuManage.language];
+            ptMenuShow->pItemsExData[i] = pMenu[i].pExtendData;
+        } 
+
+cotMenu_Task in cot_menu.c : 
+
+        tMenuShow.pszDesc = sg_tMenuManage.pMenuCtrl->pszDesc[sg_tMenuManage.language];
+
+        for (i = 0; i < tMenuShow.itemsNum && i < MENU_MAX_NUM; i++)
+        {
+            tMenuShow.pszItemsDesc[i] = (char *)pMenuList[i].pszDesc[sg_tMenuManage.language];
+            tMenuShow.pItemsExData[i] = pMenuList[i].pExtendData;
+        }
+
+cot_menu.h line 127 : 
+
+extern int cotMenu_SelectLanguage(uint8_t languageIdx);
+
+/* 菜单选项显示时需要使用的功能扩展函数 */
+
+main in demo.c (examples) : 
+    int cmd = 0;
+    int8_t musicMenuId, languageMenuId, moreSetMenuId;
+    
+    MainMenuCfg_t tMainMenu = {{"���˵�", "Main Menu"}, EnterMainMenu, ExitMainMenu, Hmi_LoadMainHmi, Hmi_MainTask};
+

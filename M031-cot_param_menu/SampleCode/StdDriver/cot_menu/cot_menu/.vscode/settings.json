@@ -1,0 +1,6 @@
+{
+    "files.associations": {
+        "hmi_music.h": "c",
+        "windows.h": "c"
+    }
+}
